@@ -22,6 +22,7 @@ public class Config {
     public static final String CATEGORY_FOODS = "nutrient_foods";
 
     //Server config values
+    public static ForgeConfigSpec.BooleanValue REQUEST_NUTRIENT_DATA_ON_JOIN;
     public static ForgeConfigSpec.DoubleValue NUTRIENT_INITIAL;
     public static ForgeConfigSpec.DoubleValue NUTRIENT_MALNOURISHED;
     public static ForgeConfigSpec.DoubleValue NUTRIENT_LOW_TARGET;
@@ -231,6 +232,8 @@ public class Config {
 
         ForgeConfigSpec.Builder CLIENT_BUILDER = new ForgeConfigSpec.Builder();
         CLIENT_BUILDER.comment("General Settings").push(CATEGORY_GENERAL);
+        REQUEST_NUTRIENT_DATA_ON_JOIN = CLIENT_BUILDER.comment("Request nutrient data to client on player join. (default:true)")
+                .define("request_nutrient_data_on_join",true);
 
         NUTRIENT_BUTTON_ENABLED = CLIENT_BUILDER.comment("Show the nutrient button in the player inventory screen. (default:true)")
                 .define("nutrient_button_enabled",true);

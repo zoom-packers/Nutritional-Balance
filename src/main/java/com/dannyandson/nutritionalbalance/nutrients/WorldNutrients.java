@@ -1,6 +1,8 @@
 package com.dannyandson.nutritionalbalance.nutrients;
 
 import com.dannyandson.nutritionalbalance.Config;
+import com.dannyandson.nutritionalbalance.NutritionalBalance;
+import com.dannyandson.nutritionalbalance.db.DbConnection;
 import com.dannyandson.nutritionalbalance.lunchbox.LunchBoxItem;
 import com.dannyandson.nutritionalbalance.network.ModNetworkHandler;
 import com.dannyandson.nutritionalbalance.network.NutrientDataSyncTrigger;
@@ -21,6 +23,7 @@ import java.util.*;
 
 public class WorldNutrients
 {
+    private static boolean initialized = false;
     private static final List<Nutrient> nutrients = new ArrayList<>();
     private static final Map<Item,List<Nutrient>> nutrientMap = new HashMap<>();
 
@@ -81,9 +84,26 @@ public class WorldNutrients
         }
         if (!nutrientMap.containsKey(item.getItem())) {
 
-            if (world!=null && world.isClientSide()) {
+            if (world!=null && world.isClientSide() && Config.REQUEST_NUTRIENT_DATA_ON_JOIN.get()) {
                 ModNetworkHandler.sendToServer(new NutrientDataSyncTrigger(item.getItem()));
             }else if(world!=null) {
+
+                if (!initialized) {
+                    var allNutrientsMap = DbConnection.getAllNutrients();
+                    for (var entry : allNutrientsMap.entrySet()) {
+                        Item item1 = ForgeRegistries.ITEMS.getValue(new ResourceLocation(entry.getKey()));
+                        if (item1 != null) {
+                            nutrientMap.put(item1, entry.getValue());
+                        }
+                    }
+                    initialized = true;
+                }
+
+                var nutrients = DbConnection.getNutrients(item.getItem().toString());
+                if (nutrients.size() > 0) {
+                    nutrientMap.put(item.getItem(), nutrients);
+                    return nutrients;
+                }
 
                 List<Nutrient> nutrientList = new ArrayList<>();
 
@@ -173,6 +193,7 @@ public class WorldNutrients
 
                     }
                 }
+                DbConnection.writeNutrients(item.getItem().toString(), nutrientList);
                 nutrientMap.put(item.getItem(), nutrientList);
             }
         }

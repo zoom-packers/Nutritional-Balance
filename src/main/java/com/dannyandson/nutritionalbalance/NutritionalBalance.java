@@ -1,5 +1,6 @@
 package com.dannyandson.nutritionalbalance;
 
+import com.dannyandson.nutritionalbalance.db.DbConnection;
 import com.dannyandson.nutritionalbalance.nutrients.PlayerNutritionData;
 import com.dannyandson.nutritionalbalance.nutrients.WorldNutrients;
 import com.dannyandson.nutritionalbalance.commands.ModCommands;
@@ -62,7 +63,7 @@ public class NutritionalBalance
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, Config.CLIENT_CONFIG);
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, Config.SERVER_CONFIG);
 
-
+        DbConnection.init();
     }
 
     private void setup(final FMLCommonSetupEvent event)

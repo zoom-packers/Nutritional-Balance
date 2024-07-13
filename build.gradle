@@ -167,6 +167,8 @@ dependencies {
     // If the group id is "net.minecraft" and the artifact id is one of ["client", "server", "joined"],
     // then special handling is done to allow a setup of a vanilla dependency without the use of an external repository.
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+    // Add Sqlite JDBC driver
+    implementation fg.deobf("curse.maven:sqlite-jdbc-560832:3582173")
 
     implementation fg.deobf("curse.maven:jei-238222:4644453")
     if (include_candlelight) {
