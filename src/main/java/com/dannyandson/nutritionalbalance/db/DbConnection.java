@@ -48,6 +48,9 @@ public class DbConnection {
     }
 
     public static HashMap<String, List<Nutrient>> getAllNutrients() {
+        if (connection == null) {
+            init();
+        }
         HashMap<String, List<Nutrient>> nutrients = new HashMap<>();
         try {
             Statement statement = connection.createStatement();
@@ -67,6 +70,9 @@ public class DbConnection {
     }
 
     public static void writeNutrients(String foodName, List<Nutrient> nutrients) {
+        if (connection == null) {
+            init();
+        }
         try {
             PreparedStatement statement = connection.prepareStatement("INSERT INTO food_nutrients (food_name, nutrient_name) VALUES (?, ?)");
             for (Nutrient nutrient : nutrients) {
@@ -74,14 +80,11 @@ public class DbConnection {
                 statement.setString(2, nutrient.name);
                 statement.executeUpdate();
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void close() {
-        try {
-            connection.close();
+            if (nutrients.size() == 0) {
+                statement.setString(1, foodName);
+                statement.setString(2, "NONE");
+                statement.executeUpdate();
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
